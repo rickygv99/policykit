@@ -15,7 +15,7 @@ def check_filter_code(policy, action):
     _locals = locals()
 
     wrapper_start = "def filter():\n\r"
-    wrapper_end = "\n\rfilter_pass = filter()"
+    wrapper_end = "\nfilter_pass = filter()"
 
     lines = ['  ' + item for item in policy.policy_filter_code.splitlines()]
     filter_str = '\n\r'.join(lines)
