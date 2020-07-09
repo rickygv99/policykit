@@ -14,11 +14,11 @@ logger = logging.getLogger(__name__)
 def check_filter_code(policy, action):
     _locals = locals()
 
-    wrapper_start = "def filter():"
-    wrapper_end = "\r\nfilter_pass = filter()"
+    wrapper_start = "def filter():\n\r"
+    wrapper_end = "\n\rfilter_pass = filter()"
 
     lines = ['  ' + item for item in policy.policy_filter_code.splitlines()]
-    filter_str = '\r\n'.join(lines)
+    filter_str = '\n\r'.join(lines)
     filter_code = wrapper_start + filter_str + wrapper_end
 
     exec(filter_code, None, _locals)
