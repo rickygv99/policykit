@@ -704,8 +704,11 @@ class CommunityAction(BaseAction,PolymorphicModel):
                 super(CommunityAction, self).save(*args, **kwargs)
 
                 if not self.is_bundled:
+                    logger.info('is not bundled')
                     action = self
                     #if they have execute permission, skip all policies
+                    logger.info(action.app_name)
+                    logger.info(action.action_codename)
                     if action.initiator.has_perm(action.app_name + '.can_execute_' + action.action_codename):
                         logger.info('has execute permission')
                         action.execute()
