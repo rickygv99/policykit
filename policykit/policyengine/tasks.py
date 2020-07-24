@@ -53,9 +53,13 @@ def consider_proposed_actions():
 
     constitution_actions = ConstitutionAction.objects.filter(proposal__status=Proposal.PROPOSED, is_bundled=False)
     for action in constitution_actions:
+        console.log('test action')
+        console.log(action)
         #if they have execute permission, skip all policies
         if action.initiator.has_perm(action.app_name + '.can_execute_' + action.action_codename):
+            console.log('executing action')
             action.execute()
         else:
             for policy in ConstitutionPolicy.objects.filter(community=action.community):
+                console.log('executing policy')
                 _execute_policy(policy, action)
