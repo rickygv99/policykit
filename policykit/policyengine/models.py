@@ -397,19 +397,17 @@ class PolicykitChangeCommunityDoc(ConstitutionAction):
 
 
 class PolicykitAddRole(ConstitutionAction):
-    name = models.CharField('name', max_length=300)
+    name = models.CharField('name', max_length=150)
     permissions = models.ManyToManyField(Permission)
 
     action_codename = 'policykitaddrole'
 
     def __str__(self):
-        perms = ""
         return "Add Role -  name: " + self.name
 
     def execute(self):
         g, _ = CommunityRole.objects.get_or_create(name=self.name)
-        for p in self.permissions.all():
-            g.permissions.add(p)
+        g.permissions.set(self.permissions.all())
         self.pass_action()
 
     class Meta:
