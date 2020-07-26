@@ -404,7 +404,7 @@ class PolicykitAddRole(ConstitutionAction):
 
     def __str__(self):
         perms = ""
-        return "Add Role -  name: " + self.name + ", permissions: "
+        return "Add Role -  name: " + self.name
 
     def execute(self):
         g, _ = CommunityRole.objects.get_or_create(name=self.name)
