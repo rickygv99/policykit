@@ -491,6 +491,7 @@ def policy_action_remove(request):
     action = None
     if data['type'] == 'Constitution':
         action = PolicykitRemoveConstitutionPolicy()
+        logger.info(data['policy'])
         action.constitution_policy = ConstitutionPolicy.objects.get(id=data['policy'])
     elif data['type'] == 'Platform':
         action = PolicykitRemovePlatformPolicy()
