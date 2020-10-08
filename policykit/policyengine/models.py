@@ -276,7 +276,7 @@ class ConstitutionAction(BaseAction, PolymorphicModel):
         proposal = self.proposal
         proposal.status = Proposal.PASSED
         proposal.save()
-        action.send(self, verb='was passed')
+        action.send(self, verb='was passed', pk=self.community.pk)
 
     def shouldCreate(self):
         return not self.pk # Runs only when object is new
