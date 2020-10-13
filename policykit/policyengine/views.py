@@ -92,7 +92,7 @@ def v2(request):
         }
 
     action_log_data = []
-    actions = Action.objects.filter(data__key=user.community.pk)
+    actions = Action.objects.filter(key=user.community.pk)
     for action in actions:
         action_data = {
             'actor': action.actor,
