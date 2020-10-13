@@ -94,12 +94,12 @@ def v2(request):
     action_log_data = []
     actions = Action.objects.all()
     logger.info(actions)
-    for action in actions:
-        logger.info(action.data)
+    for a in actions:
+        logger.info(a.data)
         action_data = {
-            'actor': action.actor,
-            'verb': action.verb,
-            'time_elapsed': action.timesince
+            'actor': a.actor,
+            'verb': a.verb,
+            'time_elapsed': a.timesince
         }
         action_log_data.append(action_data)
 
