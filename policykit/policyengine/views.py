@@ -92,8 +92,9 @@ def v2(request):
         }
 
     action_log_data = []
-    actions = Action.objects.filter(key=user.community.pk)
+    actions = Action.objects.filter()
     for action in actions:
+        logger.info(action.data)
         action_data = {
             'actor': action.actor,
             'verb': action.verb,
