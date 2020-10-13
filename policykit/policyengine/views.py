@@ -92,7 +92,7 @@ def v2(request):
         }
 
     action_log_data = []
-    actions = Action.objects.filter()
+    actions = Action.objects.all()
     for action in actions:
         logger.info(action.data)
         action_data = {
