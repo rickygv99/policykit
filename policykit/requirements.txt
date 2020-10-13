@@ -12,6 +12,7 @@ django-celery-beat==1.5.0
 django-celery-results==1.1.2
 django-grappelli==2.14.1
 django-jet==1.0.8
+django-mysql==3.8.1
 django-polymorphic==2.1.2
 django-timezone-field==4.0
 gevent==20.6.2

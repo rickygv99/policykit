@@ -66,7 +66,7 @@ ACTSTREAM_SETTINGS = {
     'MANAGER': 'policyengine.managers.myActionManager',
     'FETCH_RELATIONS': True,
     'USE_PREFETCH': True,
-    'USE_JSONFIELD': True,
+    'USE_JSONFIELD': False,
     'GFK_FETCH_DEPTH': 1,
 }
 
