@@ -245,7 +245,7 @@ class DiscordRenameChannel(PlatformAction):
         self.old_name = res['name']
 
         res = self.community.make_call(call, values=data, method='PATCH')
-        self.id = res['id'] + '_' + res['name']
+        self.id = str(res['id']) + '_' + res['name']
         data['id'] = self.id
         _ = LogAPICall.objects.create(community=self.community,
                                       call_type=call,

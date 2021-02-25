@@ -84,7 +84,7 @@ def discord_listener_actions():
 
             call_type = ('channels/%s' % channel_id)
 
-            id = channel['id'] + '_' + channel['name']
+            id = str(channel['id']) + '_' + channel['name']
             logger.info('discord: about to check rename channels')
             if not is_policykit_action(community, call_type, channel, id, 'channel'):
                 logger.info('discord: is_policy_action rename channels')
