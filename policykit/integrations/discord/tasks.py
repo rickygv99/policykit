@@ -39,6 +39,7 @@ def is_policykit_action(community, call_type, data, id, type):
 @shared_task
 def discord_listener_actions():
     for community in DiscordCommunity.objects.all():
+        logger.info('discord: in community loop')
         actions = []
 
         req = urllib.request.Request('https://discordapp.com/api/guilds/%s/channels' % community.team_id)
@@ -84,9 +85,12 @@ def discord_listener_actions():
             call_type = ('channels/%s' % channel_id)
 
             id = channel['id'] + '_' + channel['name']
+            logger.info('discord: about to check rename channels')
             if not is_policykit_action(community, call_type, channel, id, 'channel'):
+                logger.info('discord: is_policy_action rename channels')
                 c = DiscordRenameChannel.objects.filter(id=id)
                 if not c.exists():
+                    logger.info('discord: exists rename channels')
                     new_api_action = DiscordRenameChannel()
                     new_api_action.community = community
                     new_api_action.name = channel['name']
@@ -103,6 +107,7 @@ def discord_listener_actions():
                 action.revert()
 
         # Manage proposals
+        logger.info('discord: about to manage proposals')
         proposed_actions = PlatformAction.objects.filter(
             community=community,
             proposal__status=Proposal.PROPOSED,
