@@ -90,6 +90,7 @@ def discord_listener_actions():
                 logger.info('discord: is_policy_action rename channels')
                 logger.info(id)
                 c = DiscordRenameChannel.objects.filter(id=id)
+                logger.info(c.count())
                 if not c.exists():
                     logger.info('discord: exists rename channels')
                     new_api_action = DiscordRenameChannel()
