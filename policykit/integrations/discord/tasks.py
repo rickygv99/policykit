@@ -20,8 +20,8 @@ logger = logging.getLogger(__name__)
 EMOJI_LIKE = '%F0%9F%91%8D'
 EMOJI_DISLIKE = '%F0%9F%91%8E'
 
-def is_policykit_action(community, call_type, message):
-    if message['author']['id'] == DISCORD_CLIENT_ID:
+def is_policykit_action(community, call_type, data, type):
+    if type == 'message' and data['author']['id'] == DISCORD_CLIENT_ID:
         return True
     else:
         current_time_minus = datetime.datetime.now() - datetime.timedelta(minutes=2)
@@ -32,7 +32,7 @@ def is_policykit_action(community, call_type, message):
         if logs.exists():
             for log in logs:
                 j_info = json.loads(log.extra_info)
-                if message['id'] == j_info['id']:
+                if data['id'] == j_info['id']:
                     return True
     return False
 
@@ -55,7 +55,6 @@ def discord_listener_actions():
             channel_id = channel['id']
 
             # Post Message
-            call_type = ('channels/%s/messages' % channel_id)
 
             req = urllib.request.Request('https://discordapp.com/api/channels/%s/messages' % channel_id)
             req.add_header("Content-Type", "application/x-www-form-urlencoded")
@@ -64,8 +63,9 @@ def discord_listener_actions():
             resp = urllib.request.urlopen(req)
             messages = json.loads(resp.read().decode('utf-8'))
 
+            call_type = ('channels/%s/messages' % channel_id)
             for message in messages:
-                if not is_policykit_action(community, call_type, message):
+                if not is_policykit_action(community, call_type, message, 'message'):
                     post = DiscordPostMessage.objects.filter(id=message['id'])
                     if not post.exists():
                         new_api_action = DiscordPostMessage()
@@ -80,15 +80,20 @@ def discord_listener_actions():
                         actions.append(new_api_action)
 
             # Rename Channel
-            """call_type = ('channels/%s' % channel_id)
 
-            if not is_policykit_action(community, channel['name'], 'name', call_type):
-                new_api_action = DiscordRenameChannel()
-                new_api_action.community = community
-                new_api_action.name = channel['name']
-                new_api_action.channel = channel['id']
+            call_type = ('channels/%s' % channel_id)
 
-                actions.append(new_api_action)"""
+            if not is_policykit_action(community, call_type, channel, 'channel'):
+                id = channel['id'] + '_' + channel['name']
+                c = DiscordRenameChannel.objects.filter(id=id)
+                if not c.exists():
+                    new_api_action = DiscordRenameChannel()
+                    new_api_action.community = community
+                    new_api_action.name = channel['name']
+                    new_api_action.channel = channel['id']
+                    new_api_action.id = id
+
+                    actions.append(new_api_action)
 
         for action in actions:
             action.community_origin = True

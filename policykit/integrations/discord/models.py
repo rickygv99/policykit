@@ -210,8 +210,9 @@ class DiscordRenameChannel(PlatformAction):
     guild_id = None
     id = None
 
-    channel = models.CharField(max_length=18)
     name = models.TextField()
+    channel = models.CharField(max_length=18)
+    old_name = None
 
     ACTION = 'channels/{0}'.format(channel)
     AUTH = 'user'
@@ -225,15 +226,31 @@ class DiscordRenameChannel(PlatformAction):
             ('can_execute_discordrenamechannel', 'Can execute discord rename channel'),
         )
 
-    def execute(self):
-        data = json.dumps({"name": self.name}).encode('utf-8')
-        call_info = self.community.API + ('channels/%s' % self.channel)
+    def revert(self):
+        values = {
+            'name': self.old_name
+        }
+        super().revert(values, 'channels/%s' % (self.channel), method='PATCH')
 
-        req = urllib.request.Request(call_info, data, method='PATCH')
-        req.add_header('Authorization', 'Bot %s' % DISCORD_BOT_TOKEN)
-        req.add_header('Content-Type', 'application/json')
-        req.add_header("User-Agent", "Mozilla/5.0") # yes, this is strange. discord requires it when using urllib for some weird reason
-        resp = urllib.request.urlopen(req)
+    def execute(self):
+        from policyengine.models import LogAPICall
+
+        data = {
+            'name': self.name
+        }
+
+        call = ('channels/%s' % self.channel)
+
+        res = self.community.make_call(call)
+        self.old_name = res['name']
+
+        res = self.community.make_call(call, values=data, method='PATCH')
+        self.id = res['id'] + '_' + res['name']
+        data['id'] = self.id
+        _ = LogAPICall.objects.create(community=self.community,
+                                      call_type=call,
+                                      extra_info=json.dumps(data))
+
         super().pass_action()
 
 class DiscordStarterKit(StarterKit):
