@@ -66,7 +66,7 @@ def discord_listener_actions():
 
             call_type = ('channels/%s/messages' % channel_id)
             for message in messages:
-                if not is_policykit_action(community, call_type, message, data['id'], 'message'):
+                if not is_policykit_action(community, call_type, message, message['id'], 'message'):
                     post = DiscordPostMessage.objects.filter(id=message['id'])
                     if not post.exists():
                         new_api_action = DiscordPostMessage()
@@ -82,10 +82,10 @@ def discord_listener_actions():
 
             # Rename Channel
 
+            logger.info('discord: about to check rename channels')
             call_type = ('channels/%s' % channel_id)
 
             id = str(channel['id']) + '_' + channel['name']
-            logger.info('discord: about to check rename channels')
             if not is_policykit_action(community, call_type, channel, id, 'channel'):
                 logger.info('discord: is_policy_action rename channels')
                 c = DiscordRenameChannel.objects.filter(id=id)
