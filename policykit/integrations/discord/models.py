@@ -167,24 +167,9 @@ class DiscordUser(CommunityUser):
 class DiscordPostMessage(PlatformAction):
     guild_id = None
     id = None
-    choices = [("733209360549019691", "general"), ("733982247014891530", "test")] # just for testing purposes
-
-    """def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.guild_id = self.community.team_id
-
-        req = urllib.request.Request('https://discordapp.com/api/guilds/%s/channels' % self.guild_id)
-        req.add_header("Content-Type", "application/x-www-form-urlencoded")
-        req.add_header('Authorization', 'Bot %s' % DISCORD_BOT_TOKEN)
-        req.add_header("User-Agent", "Mozilla/5.0") # yes, this is strange. discord requires it when using urllib for some weird reason
-        resp = urllib.request.urlopen(req)
-        channels = json.loads(resp.read().decode('utf-8'))
-
-        for c in channels:
-            self.choices.append((c['id'], c['name']))"""
 
     text = models.TextField()
-    channel = models.CharField(max_length=18, choices=choices)
+    channel = models.CharField(max_length=18)
 
     ACTION = 'channels/{0}/messages'.format(channel)
     AUTH = 'user'
@@ -205,8 +190,6 @@ class DiscordPostMessage(PlatformAction):
     def execute(self):
         from policyengine.models import LogAPICall
 
-        logger.info('executing action')
-
         data = {
             'content': self.text
         }
@@ -221,17 +204,13 @@ class DiscordPostMessage(PlatformAction):
                                       call_type=call,
                                       extra_info=json.dumps(data))
 
-        logger.info('finished executing action: ' + self.community_post)
-
         super().pass_action()
 
 class DiscordRenameChannel(PlatformAction):
-
     guild_id = None
     id = None
-    choices = [("733209360549019691", "general"), ("733982247014891530", "test")] # just for testing purposes
 
-    channel = models.CharField(max_length=18, choices=choices)
+    channel = models.CharField(max_length=18)
     name = models.TextField()
 
     ACTION = 'channels/{0}'.format(channel)
