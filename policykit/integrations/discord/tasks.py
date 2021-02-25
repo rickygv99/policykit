@@ -4,7 +4,7 @@ from celery import shared_task
 from celery.schedules import crontab
 from policykit.settings import DISCORD_BOT_TOKEN, DISCORD_CLIENT_ID
 from policyengine.models import Proposal, LogAPICall, PlatformPolicy, PlatformAction, BooleanVote, NumberVote
-from integrations.discord.models import DiscordCommunity, DiscordUser, DiscordPostMessage
+from integrations.discord.models import DiscordCommunity, DiscordUser, DiscordPostMessage, DiscordRenameChannel
 from policyengine.views import filter_policy, check_policy, initialize_policy
 from urllib import parse
 import urllib.request
@@ -88,9 +88,7 @@ def discord_listener_actions():
             id = str(channel['id']) + '_' + channel['name']
             if not is_policykit_action(community, call_type, channel, id, 'channel'):
                 logger.info('discord: is_policy_action rename channels')
-                logger.info(id)
                 c = DiscordRenameChannel.objects.filter(id=id)
-                logger.info(c.count())
                 if not c.exists():
                     logger.info('discord: exists rename channels')
                     new_api_action = DiscordRenameChannel()
