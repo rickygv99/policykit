@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 EMOJI_LIKE = '%F0%9F%91%8D'
 EMOJI_DISLIKE = '%F0%9F%91%8E'
 
-def is_policykit_action(community, call_type, data, type):
+def is_policykit_action(community, call_type, data, id, type):
     if type == 'message' and data['author']['id'] == DISCORD_CLIENT_ID:
         return True
     else:
@@ -32,7 +32,7 @@ def is_policykit_action(community, call_type, data, type):
         if logs.exists():
             for log in logs:
                 j_info = json.loads(log.extra_info)
-                if data['id'] == j_info['id']:
+                if id == j_info['id']:
                     return True
     return False
 
@@ -65,7 +65,7 @@ def discord_listener_actions():
 
             call_type = ('channels/%s/messages' % channel_id)
             for message in messages:
-                if not is_policykit_action(community, call_type, message, 'message'):
+                if not is_policykit_action(community, call_type, message, data['id'], 'message'):
                     post = DiscordPostMessage.objects.filter(id=message['id'])
                     if not post.exists():
                         new_api_action = DiscordPostMessage()
@@ -83,8 +83,8 @@ def discord_listener_actions():
 
             call_type = ('channels/%s' % channel_id)
 
-            if not is_policykit_action(community, call_type, channel, 'channel'):
-                id = channel['id'] + '_' + channel['name']
+            id = channel['id'] + '_' + channel['name']
+            if not is_policykit_action(community, call_type, channel, id, 'channel'):
                 c = DiscordRenameChannel.objects.filter(id=id)
                 if not c.exists():
                     new_api_action = DiscordRenameChannel()
